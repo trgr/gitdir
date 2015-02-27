@@ -4,7 +4,7 @@ use strict;
 use Cwd;
 use Data::Dumper;
 
-our $CONSOLE_OUTPUT_MAX_SPACING = 20;
+our $CONSOLE_OUTPUT_MAX_SPACING = 30;
 
 #################
 #BEGIN FUNCTIONS#
@@ -46,14 +46,22 @@ sub printRow{
 		my $sep = " " x $numSpaces;		
 		my $out = join($sep, @_ );
 
-		print $out;
+		print $out."\n";
 }
 
 sub gitStatus{
 		my $dir = shift;
 		my $lastcwd = getcwd();
 		my @cmd = `cd $dir && git status --porcelain -s -b && cd $lastcwd`;
-		return $cmd[0]
+		my @info = split( /\.\./ , $cmd[0] );
+		my $stat = $info[0];
+		if( $cmd[1] =~ /^ M/ ){
+				$stat .= " M";
+		}
+		if( $info[1] =~ /ahead/){
+				$stat .= " ahead";
+		}
+		return $stat;
 }
 
 ###############
